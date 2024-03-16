@@ -729,7 +729,7 @@ func (a *NXActionCTNAT) MarshalBinary() (data []byte, err error) {
 		binary.BigEndian.PutUint16(data[n:], *a.RangeProtoMin)
 		n += 2
 	}
-	if a.RangeProtoMin != nil {
+	if a.RangeProtoMax != nil {
 		binary.BigEndian.PutUint16(data[n:], *a.RangeProtoMax)
 		n += 2
 	}
