@@ -2069,7 +2069,7 @@ func (m *ArpXPaField) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
-func NewArpTpaField(arpTpa net.IP) *MatchField {
+func NewArpTpaField(arpTpa net.IP, ipMask *net.IP) *MatchField {
 	f := new(MatchField)
 	f.Class = OXM_CLASS_OPENFLOW_BASIC
 	f.Field = OXM_FIELD_ARP_TPA
@@ -2079,10 +2079,20 @@ func NewArpTpaField(arpTpa net.IP) *MatchField {
 	arpTpaField.ArpPa = arpTpa
 	f.Value = arpTpaField
 	f.Length = uint8(arpTpaField.Len())
+
+	// Add the mask
+	if ipMask != nil {
+		mask := new(ArpXPaField)
+		mask.ArpPa = *ipMask
+		f.Mask = mask
+		f.HasMask = true
+		f.Length += uint8(mask.Len())
+	}
+
 	return f
 }
 
-func NewArpSpaField(arpSpa net.IP) *MatchField {
+func NewArpSpaField(arpSpa net.IP, ipMask *net.IP) *MatchField {
 	f := new(MatchField)
 	f.Class = OXM_CLASS_OPENFLOW_BASIC
 	f.Field = OXM_FIELD_ARP_SPA
@@ -2092,6 +2102,16 @@ func NewArpSpaField(arpSpa net.IP) *MatchField {
 	arpXPAField.ArpPa = arpSpa
 	f.Value = arpXPAField
 	f.Length = uint8(arpXPAField.Len())
+
+	// Add the mask
+	if ipMask != nil {
+		mask := new(ArpXPaField)
+		mask.ArpPa = *ipMask
+		f.Mask = mask
+		f.HasMask = true
+		f.Length += uint8(mask.Len())
+	}
+
 	return f
 }
 
