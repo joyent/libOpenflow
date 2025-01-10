@@ -157,7 +157,9 @@ func DecodeNxAction(data []byte) (Action, error) {
 	case NXAST_SET_MPLS_TTL:
 	case NXAST_DEC_MPLS_TTL:
 	case NXAST_STACK_PUSH:
+		a = new(NXActionStack)
 	case NXAST_STACK_POP:
+		a = new(NXActionStack)
 	case NXAST_SAMPLE:
 	case NXAST_SET_MPLS_LABEL:
 	case NXAST_SET_MPLS_TC:
