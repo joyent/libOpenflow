@@ -1382,16 +1382,17 @@ func (m *IpEcnField) UnmarshalBinary(data []byte) (err error) {
 	return
 }
 
-// Return a MatchField for vlan id matching
-func NewIpEcnField(vlanPcp uint8) *MatchField {
+// Return a MatchField for ecn matching
+func NewIpEcnField(ecn uint8) *MatchField {
 	f := new(MatchField)
 	f.Class = OXM_CLASS_OPENFLOW_BASIC
 	f.Field = OXM_FIELD_IP_ECN
 	f.HasMask = false
 
-	vlanPcpField := new(IpEcnField)
-	f.Value = vlanPcpField
-	f.Length = uint8(vlanPcpField.Len())
+	ecnField := new(IpEcnField)
+	ecnField.IpEcn = ecn
+	f.Value = ecnField
+	f.Length = uint8(ecnField.Len())
 
 	return f
 }
