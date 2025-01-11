@@ -80,6 +80,10 @@ func DecodeInstr(data []byte) (Instruction, error) {
 		return nil, fmt.Errorf("unknown Instrheader type: %v", t)
 	}
 
+	if a == nil {
+		return nil, fmt.Errorf("No supported Instrheader type: %v", t)
+	}
+
 	err := a.UnmarshalBinary(data)
 	if err != nil {
 		klog.ErrorS(err, "Failed to unmarshal Instruction", "data", data)

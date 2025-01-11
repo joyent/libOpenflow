@@ -88,7 +88,7 @@ func DecodeAction(data []byte) (Action, error) {
 	case ActionType_PushVlan:
 		a = new(ActionPush)
 	case ActionType_PopVlan:
-		a = new(ActionHeader)
+		a = new(ActionPopVlan)
 	case ActionType_PushMpls:
 		a = new(ActionPush)
 	case ActionType_PopMpls:

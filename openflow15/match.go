@@ -566,6 +566,11 @@ func DecodeMatchField(class uint16, field uint8, length uint8, hasMask bool, dat
 			return nil, err
 		}
 
+		if val == nil {
+			err := fmt.Errorf("Not supported field for nxm_1: %v", field)
+			return nil, err
+		}
+
 		err := val.UnmarshalBinary(data)
 		if err != nil {
 			klog.ErrorS(err, "Failed to unmarshal Nxm Field", "data", data)

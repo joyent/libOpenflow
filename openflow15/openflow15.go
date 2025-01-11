@@ -1510,7 +1510,9 @@ func (p *PropExperimenter) Len() uint16 {
 	l := uint16(len(p.Data) * 4)
 	n += l
 	//n += uint16((8 - (l % 8)) % 8)  // pad to make multiple of 8
-	n += uint16(8 - (l % 8)) // pad to make multiple of 8
+	//n += uint16(8 - (l % 8)) // pad to make multiple of 8
+	n += uint16((8 - (n % 8)) % 8) // pad to make multiple of 8
+
 	return n
 }
 
@@ -1547,7 +1549,7 @@ func (p *PropExperimenter) UnmarshalBinary(data []byte) (err error) {
 	p.ExpType = binary.BigEndian.Uint32(data[n:])
 	n += 4
 
-	for n < p.Header.Length+p.Header.Len() {
+	for n < p.Header.Length {
 		d := binary.BigEndian.Uint32(data[n:])
 		p.Data = append(p.Data, d)
 		n += 4

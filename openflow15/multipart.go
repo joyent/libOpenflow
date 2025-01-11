@@ -83,7 +83,7 @@ func (s *MultipartRequest) UnmarshalBinary(data []byte) error {
 			// The request body is empty.
 		case MultipartType_Port:
 			// The request body is struct ofp_port_multipart_request.
-			req = new(PortMultipartRequst)
+			req = new(PortMultipartRequest)
 		case MultipartType_QueueStats:
 			// The request body is struct ofp_queue_multipart_request.
 			req = new(QueueMultipartRequest)
@@ -189,7 +189,6 @@ func (s *MultipartReply) UnmarshalBinary(data []byte) error {
 		return err
 	}
 	n := s.Header.Len()
-
 	s.Type = binary.BigEndian.Uint16(data[n:])
 	n += 2
 	s.Flags = binary.BigEndian.Uint16(data[n:])
@@ -863,29 +862,29 @@ const (
 )
 
 // ofp_port_multipart_request
-type PortMultipartRequst struct {
+type PortMultipartRequest struct {
 	PortNo uint32
 	pad    []uint8 // Size 4
 }
 
-func NewPortStatsRequest(port uint32) *PortMultipartRequst {
-	p := new(PortMultipartRequst)
+func NewPortStatsRequest(port uint32) *PortMultipartRequest {
+	p := new(PortMultipartRequest)
 	p.pad = make([]byte, 4)
 	p.PortNo = port
 	return p
 }
 
-func (s *PortMultipartRequst) Len() (n uint16) {
+func (s *PortMultipartRequest) Len() (n uint16) {
 	return 8
 }
 
-func (s *PortMultipartRequst) MarshalBinary() (data []byte, err error) {
+func (s *PortMultipartRequest) MarshalBinary() (data []byte, err error) {
 	data = make([]byte, int(s.Len()))
 	binary.BigEndian.PutUint32(data, s.PortNo)
 	return
 }
 
-func (s *PortMultipartRequst) UnmarshalBinary(data []byte) error {
+func (s *PortMultipartRequest) UnmarshalBinary(data []byte) error {
 	s.PortNo = binary.BigEndian.Uint32(data)
 	return nil
 }
@@ -2867,31 +2866,10 @@ func (m *MeterFeatures) UnmarshalBinary(data []byte) (err error) {
 	return
 }
 
-// ofp_port_multipart_request
-type PortMultipartRequest struct {
-	PortNo uint32
-	Pad    []byte // 4 bytes
-}
-
 func NewPortMultipartRequest(num uint32) *PortMultipartRequest {
 	n := new(PortMultipartRequest)
 	n.PortNo = num
 	return n
-}
-
-func (p *PortMultipartRequest) Len() uint16 {
-	return 8
-}
-
-func (p *PortMultipartRequest) MarshalBinary() (data []byte, err error) {
-	data = make([]byte, p.Len())
-	binary.BigEndian.PutUint32(data[0:], p.PortNo)
-	return
-}
-
-func (p *PortMultipartRequest) UnmarshalBinary(data []byte) (err error) {
-	p.PortNo = binary.BigEndian.Uint32(data)
-	return
 }
 
 // ofp_queue_desc
