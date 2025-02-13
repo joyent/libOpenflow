@@ -1,9 +1,13 @@
 package libOpenflow
 
 import (
+	"fmt"
 	"io"
 	"net"
+	"os"
 	"runtime"
+	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -155,5 +159,33 @@ func TestStreamInbound(t *testing.T) {
 		} else {
 			assert.Equal(t, expectedMessages[1], msgs[i])
 		}
+	}
+}
+
+func TestObj(t *testing.T) {
+	b, err := os.ReadFile("msg.txt") // just pass the file name
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
+	msg := string(b)
+	tmp := strings.Split(msg, ",")
+
+	data := []byte{}
+
+	for _, s := range tmp {
+		i, err := strconv.Atoi(s)
+		if err == nil {
+			data = append(data, byte(i))
+		}
+	}
+
+	fmt.Printf("byt len=%d \n", len(data))
+
+	ofMsg, err := openflow15.Parse(data)
+	if err != nil {
+		fmt.Printf("err=%v\n", err)
+	} else if ofMsg != nil {
+		fmt.Printf("msg=%+v\n", ofMsg)
 	}
 }
