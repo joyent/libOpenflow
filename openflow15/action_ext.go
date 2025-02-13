@@ -250,13 +250,23 @@ func NewMplsTtlField(ttl uint8) *MatchField {
 	return f
 }
 
-/*
+func NewNXActionCtClear() *NXActionCtClear {
+	a := &NXActionCtClear{
+		NXActionHeader: NewNxActionHeader(NXAST_CT_CLEAR),
+	}
+
+	//a.Length = a.NXActionHeader.Len()
+
+	return a
+}
+
 type NXActionCtClear struct {
 	*NXActionHeader
 }
 
 func (a *NXActionCtClear) Len() (n uint16) {
-	return a.Length
+
+	return a.NXActionHeader.Len() + 2 /* align */
 }
 
 func (a *NXActionCtClear) MarshalBinary() (data []byte, err error) {
@@ -281,13 +291,40 @@ func (a *NXActionCtClear) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
-func NewNXActionCtClear() *NXActionCtClear {
-	a := &NXActionCtClear{
-		NXActionHeader: NewNxActionHeader(NXAST_CT_CLEAR),
+/*
+type NXActionCtClear struct {
+	*NXActionHeader
+}
+
+func (a *NXActionCtClear) Len() uint16 {
+	return a.NXActionHeader.Len()
+}
+
+func (a *NXActionCtClear) MarshalBinary() (data []byte, err error) {
+	data = make([]byte, a.Len())
+	n := 0
+	a.Length = a.Len()
+	b, err := a.NXActionHeader.MarshalBinary()
+	if err != nil {
+		return data, err
+	}
+	copy(data[n:], b)
+	n += len(b)
+
+	return
+}
+
+func (a *NXActionCtClear) UnmarshalBinary(data []byte) error {
+	a.NXActionHeader = new(NXActionHeader)
+	err := a.NXActionHeader.UnmarshalBinary(data)
+	if err != nil {
+		return err
 	}
 
-	//a.Length = a.NXActionHeader.Len()
+	if len(data) < int(a.Length) {
+		return errors.New("the []byte is too short to unmarshal a full NXActionCtClear message")
+	}
 
-	return a
+	return nil
 }
 */

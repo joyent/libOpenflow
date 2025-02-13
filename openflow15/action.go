@@ -121,13 +121,22 @@ func DecodeAction(data []byte) (Action, error) {
 		if v == NxExperimenterID {
 			a, err = DecodeNxAction(data)
 			if err != nil {
-				klog.ErrorS(err, "Failed to decode NxAction", "data", data)
+				//klog.ErrorS(err, "Failed to decode NxAction", "data", data)
+				err = fmt.Errorf("Failed to decode NxAction: err=%v, %v", err, data)
+				return nil, err
+			} else if a == nil {
+				err = fmt.Errorf("Failed to decode NxAction: no supported action, %v", data)
 				return nil, err
 			}
 		}
 	default:
 		return nil, fmt.Errorf("DecodeAction unknown type: %v", t)
 	}
+
+	if a == nil {
+		return nil, fmt.Errorf("DecodeAction unknown type: %v", t)
+	}
+
 	err = a.UnmarshalBinary(data)
 	if err != nil {
 		klog.ErrorS(err, "Failed to unmarshal", "structure", a, "data", data)

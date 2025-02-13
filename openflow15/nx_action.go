@@ -178,6 +178,7 @@ func DecodeNxAction(data []byte) (Action, error) {
 	case NXAST_SAMPLE2:
 	case NXAST_OUTPUT_TRUNC:
 	case NXAST_CT_CLEAR:
+		a = new(NXActionCtClear)
 	case NXAST_CT_RESUBMIT:
 		a = new(NXActionResubmitTable)
 		a.(*NXActionResubmitTable).withCT = true
@@ -189,6 +190,12 @@ func DecodeNxAction(data []byte) (Action, error) {
 		klog.ErrorS(err, "Received invalid NXActionHeader", "data", data)
 		return nil, err
 	}
+
+	if a == nil {
+		err := fmt.Errorf("unsupported subtype: %v", subtype)
+		return nil, err
+	}
+
 	return a, nil
 }
 

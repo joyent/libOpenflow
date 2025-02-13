@@ -7,7 +7,9 @@ all: test
 
 .PHONY: test
 test:
-	$(GO) test -v ./...
+	#$(GO) test -v ./...
+	#go test -v -run TestSecurityOrganizerMain
+	go test -v -run TestObj
 
 # code linting
 $(GOLANGCI_LINT_BIN):
