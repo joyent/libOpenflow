@@ -324,12 +324,14 @@ func (o *OxmId) UnmarshalBinary(data []byte) error {
 }
 
 func DecodeMatchField(class uint16, field uint8, length uint8, hasMask bool, data []byte) (util.Message, error) {
-	if class == OXM_CLASS_OPENFLOW_BASIC {
+	if class == OXM_CLASS_OPENFLOW_BASIC ||
+		class == OXM_CLASS_NXM_0 {
 		var val util.Message
 		val = nil
 		switch field {
 		case OXM_FIELD_IN_PORT:
-			val = new(InPortField)
+			//val = new(InPortField)
+			val = new(NxmInportField)
 		case OXM_FIELD_IN_PHY_PORT:
 			val = new(InPhyPortField)
 		case OXM_FIELD_METADATA:
