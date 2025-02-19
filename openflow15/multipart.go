@@ -2053,18 +2053,18 @@ func (f *TableFeatures) UnmarshalBinary(data []byte) error {
 
 // ofp_flow_desc
 type FlowDesc struct {
-	Length      uint16
-	Pad2        uint16
-	TableId     uint8
-	Pad         uint8
-	Priority    uint16
-	IdleTimeout uint16
-	HardTimeout uint16
-	Flags       uint16
-	Importance  uint16
-	Cookie      uint64
-	Match
-	Stats
+	Length       uint16
+	Pad2         uint16
+	TableId      uint8
+	Pad          uint8
+	Priority     uint16
+	IdleTimeout  uint16
+	HardTimeout  uint16
+	Flags        uint16
+	Importance   uint16
+	Cookie       uint64
+	Match        Match
+	Stats        Stats
 	Instructions []Instruction
 }
 
@@ -2074,7 +2074,7 @@ func (f *FlowDesc) AddInstruction(i Instruction) {
 
 func NewFlowDesc() *FlowDesc {
 	n := new(FlowDesc)
-	n.Match = *NewMatch()
+	//n.Match = *NewMatch()
 	return n
 }
 
