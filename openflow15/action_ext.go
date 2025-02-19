@@ -84,7 +84,23 @@ func (a *NXActionEncap) MarshalBinary() (data []byte, err error) {
 }
 
 func (a *NXActionEncap) UnmarshalBinary(data []byte) error {
-	return fmt.Errorf("NXActionEncap.UnmarshalBinary is not implemted")
+	n := 0
+	a.NXActionHeader = new(NXActionHeader)
+	if err := a.NXActionHeader.UnmarshalBinary(data[n:]); err != nil {
+		return err
+	}
+	n += int(a.NXActionHeader.Len())
+	if len(data) < int(a.Len()) {
+		return errors.New("the []byte is too short to unmarshal a full NXActionEncap message")
+	}
+
+	a.HeaderSize = binary.BigEndian.Uint16(data[n:])
+	n += 2
+
+	a.PacketType = binary.BigEndian.Uint32(data[n:])
+	n += 4
+
+	return nil
 }
 
 func NewNXActionEncap(pktType uint32) *NXActionEncap {

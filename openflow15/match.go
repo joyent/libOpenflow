@@ -324,14 +324,12 @@ func (o *OxmId) UnmarshalBinary(data []byte) error {
 }
 
 func DecodeMatchField(class uint16, field uint8, length uint8, hasMask bool, data []byte) (util.Message, error) {
-	if class == OXM_CLASS_OPENFLOW_BASIC ||
-		class == OXM_CLASS_NXM_0 {
+	if class == OXM_CLASS_OPENFLOW_BASIC {
 		var val util.Message
 		val = nil
 		switch field {
 		case OXM_FIELD_IN_PORT:
-			//val = new(InPortField)
-			val = new(NxmInportField)
+			val = new(InPortField)
 		case OXM_FIELD_IN_PHY_PORT:
 			val = new(InPhyPortField)
 		case OXM_FIELD_METADATA:
@@ -426,6 +424,23 @@ func DecodeMatchField(class uint16, field uint8, length uint8, hasMask bool, dat
 			return nil, err
 		}
 		return val, nil
+	} else if class == OXM_CLASS_NXM_0 {
+		var val util.Message
+		val = nil
+		switch field {
+		case OXM_FIELD_IN_PORT:
+			val = new(NxmInportField)
+		default:
+			err := fmt.Errorf("unhandled Field: %d in Class: %d", field, class)
+			klog.ErrorS(err, "Received bad pkt class", "data", data)
+			return nil, err
+		}
+		err := val.UnmarshalBinary(data)
+		if err != nil {
+			klog.ErrorS(err, "Failed to unmarshal Oxm Field", "data", data)
+			return nil, err
+		}
+		return val, nil
 	} else if class == OXM_CLASS_NXM_1 {
 		var val util.Message
 		switch field {
@@ -495,6 +510,7 @@ func DecodeMatchField(class uint16, field uint8, length uint8, hasMask bool, dat
 		case NXM_NX_TCP_FLAGS:
 		case NXM_NX_DP_HASH:
 		case NXM_NX_RECIRC_ID:
+			val = new(Uint32Message)
 		case NXM_NX_CONJ_ID:
 			val = new(Uint32Message)
 		case NXM_NX_TUN_GBP_ID:
