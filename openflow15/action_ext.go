@@ -84,7 +84,23 @@ func (a *NXActionEncap) MarshalBinary() (data []byte, err error) {
 }
 
 func (a *NXActionEncap) UnmarshalBinary(data []byte) error {
-	return fmt.Errorf("NXActionEncap.UnmarshalBinary is not implemted")
+	n := 0
+	a.NXActionHeader = new(NXActionHeader)
+	if err := a.NXActionHeader.UnmarshalBinary(data[n:]); err != nil {
+		return err
+	}
+	n += int(a.NXActionHeader.Len())
+	if len(data) < int(a.Len()) {
+		return errors.New("the []byte is too short to unmarshal a full NXActionEncap message")
+	}
+
+	a.HeaderSize = binary.BigEndian.Uint16(data[n:])
+	n += 2
+
+	a.PacketType = binary.BigEndian.Uint32(data[n:])
+	n += 4
+
+	return nil
 }
 
 func NewNXActionEncap(pktType uint32) *NXActionEncap {
@@ -255,18 +271,21 @@ func NewNXActionCtClear() *NXActionCtClear {
 		NXActionHeader: NewNxActionHeader(NXAST_CT_CLEAR),
 	}
 
-	//a.Length = a.NXActionHeader.Len()
+	a.Length = 16
 
 	return a
 }
 
 type NXActionCtClear struct {
 	*NXActionHeader
+
+	// for align 8
+	dummy1 uint16
+	dummp2 uint32
 }
 
 func (a *NXActionCtClear) Len() (n uint16) {
-
-	return a.NXActionHeader.Len() + 2 /* align */
+	return a.Length
 }
 
 func (a *NXActionCtClear) MarshalBinary() (data []byte, err error) {
@@ -290,41 +309,3 @@ func (a *NXActionCtClear) UnmarshalBinary(data []byte) error {
 
 	return nil
 }
-
-/*
-type NXActionCtClear struct {
-	*NXActionHeader
-}
-
-func (a *NXActionCtClear) Len() uint16 {
-	return a.NXActionHeader.Len()
-}
-
-func (a *NXActionCtClear) MarshalBinary() (data []byte, err error) {
-	data = make([]byte, a.Len())
-	n := 0
-	a.Length = a.Len()
-	b, err := a.NXActionHeader.MarshalBinary()
-	if err != nil {
-		return data, err
-	}
-	copy(data[n:], b)
-	n += len(b)
-
-	return
-}
-
-func (a *NXActionCtClear) UnmarshalBinary(data []byte) error {
-	a.NXActionHeader = new(NXActionHeader)
-	err := a.NXActionHeader.UnmarshalBinary(data)
-	if err != nil {
-		return err
-	}
-
-	if len(data) < int(a.Length) {
-		return errors.New("the []byte is too short to unmarshal a full NXActionCtClear message")
-	}
-
-	return nil
-}
-*/

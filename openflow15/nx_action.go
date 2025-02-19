@@ -183,6 +183,7 @@ func DecodeNxAction(data []byte) (Action, error) {
 		a = new(NXActionResubmitTable)
 		a.(*NXActionResubmitTable).withCT = true
 	case NXAST_RAW_ENCAP:
+		a = new(NXActionEncap)
 	case NXAST_RAW_DECAP:
 	case NXAST_DEC_NSH_TTL:
 	default:
